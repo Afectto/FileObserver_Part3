@@ -53,18 +53,37 @@ MainWindow::MainWindow(QWidget *parent)
     strategyComboBox->addItem("По файлам");
     strategyComboBox->addItem("По типам");
 
+    topPanel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+
+    displayModeComboBox = new QComboBox(this);
+    displayModeComboBox->addItem("Список");
+    displayModeComboBox->addItem("Столбчатая диаграмма");
+    displayModeComboBox->addItem("Круговая диаграмма");
+
     topLayout->addWidget(new QLabel("Стратегия:"));
     topLayout->addWidget(strategyComboBox);
-
-    topPanel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     topPanel->setMaximumHeight(strategyComboBox->sizeHint().height() + 20);
+
+    topLayout->addWidget(new QLabel("Отображение:"));
+    topLayout->addWidget(displayModeComboBox);
+    topPanel->setMaximumHeight(displayModeComboBox->sizeHint().height() + 20);
+
+    barChartAdapter = new ChartAdapter(new BarChart());
+    pieChartAdapter = new ChartAdapter(new PieChart());
+
+    stackedWidget = new QStackedWidget(this);
+    stackedWidget->addWidget(tableView);  // index 0 - Таблица
+    stackedWidget->addWidget(barChartAdapter->GetChartView());  // index 1 - Столбчатая диаграмма
+    stackedWidget->addWidget(pieChartAdapter->GetChartView());  // index 2 - Круговая диаграмма
+
+    stackedWidget->setCurrentIndex(0);
 
     topPanel->setLayout(topLayout);
 
     // Splitter с деревом и таблицей
     QSplitter *splitter = new QSplitter(this);
     splitter->addWidget(treeView);
-    splitter->addWidget(tableView);
+    splitter->addWidget(stackedWidget);
 
     // Добавляем всё в основной layout
     mainLayout->addWidget(topPanel);
@@ -72,6 +91,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     // Устанавливаем центральный виджет
     centralWidget->setLayout(mainLayout);
+
     setCentralWidget(centralWidget);
 
     // Выбор стратегии
@@ -83,9 +103,12 @@ MainWindow::MainWindow(QWidget *parent)
             this, &MainWindow::on_selectionChangedSlot);
     connect(strategyComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged),
             this, &MainWindow::on_strategyChanged);
+    connect(displayModeComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged),
+            this, &MainWindow::changeDisplayMode);
 
     // Выбор стратегии по умолчанию
     on_strategyChanged(0);
+    subscribeChartsToStrategy(strategies[0]);
 }
 
 void MainWindow::on_selectionChangedSlot(const QItemSelection &selected, const QItemSelection &deselected)
@@ -135,12 +158,14 @@ void MainWindow::on_strategyChanged(int index)
 
     ISizeCalculationStrategy *strategy = strategies[index];
     fileModel->setStrategy(strategy);
+    subscribeChartsToStrategy(strategy);
     QModelIndex selectedIndex = treeView->selectionModel()->currentIndex();
     if (selectedIndex.isValid()) {
         QString selectedPath = dirModel->filePath(selectedIndex);
         fileModel->setRootPath(selectedPath); // Обновляем путь модели файлов
     }
 
+    subscribeChartsToStrategy(strategy);
     updateColumnWidth();
 }
 
@@ -150,6 +175,24 @@ void MainWindow::updateColumnWidth()
 
     int maxWidth = static_cast<FileExplorerModel*>(fileModel)->getMaxColumnWidth();
     tableView->setColumnWidth(0, maxWidth);
+}
+
+void MainWindow::changeDisplayMode(int index) {
+    stackedWidget->setCurrentIndex(index);
+}
+
+void MainWindow::subscribeChartsToStrategy(ISizeCalculationStrategy *strategy) {
+    if (currentStrategy) { // Проверяем, есть ли старая стратегия
+        currentStrategy->Detach(barChartAdapter);
+        currentStrategy->Detach(pieChartAdapter);
+    }
+
+    if (strategy) { // Проверяем, что новая стратегия не nullptr
+        strategy->Attach(barChartAdapter);
+        strategy->Attach(pieChartAdapter);
+    }
+
+    currentStrategy = strategy; // Обновляем текущую стратегию
 }
 
 MainWindow::~MainWindow()

@@ -40,5 +40,6 @@ QVector<QPair<QString, QString>> FileTypeStrategy::calculate(const QString &path
         displayList.emplace_back(it.key(), percentageStr);
     }
 
+    Notify(sizeMap);
     return displayList;
 }

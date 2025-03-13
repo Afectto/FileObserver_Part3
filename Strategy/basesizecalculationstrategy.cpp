@@ -2,6 +2,24 @@
 #include <QDir>
 #include <QFileInfoList>
 
+void BaseSizeCalculationStrategy::Attach(IFileBrowserObserver *observer) {
+    if (!observers.contains(observer)) {
+        observers.append(observer);
+    }
+}
+
+void BaseSizeCalculationStrategy::Detach(IFileBrowserObserver *observer) {
+    if (observers.contains(observer)) {
+        observers.removeAll(observer);
+    }
+}
+
+void BaseSizeCalculationStrategy::Notify(const QMap<QString, qint64> &data) {
+    for (auto observer : observers) {
+        observer->UpdateDisplay(data);
+    }
+}
+
 qint64 BaseSizeCalculationStrategy::calculateSize(const QString &path) {
     qint64 size = 0;
     QDir dir(path);

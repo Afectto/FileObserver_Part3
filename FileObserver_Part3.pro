@@ -1,4 +1,5 @@
-QT       += core gui
+QT += core gui
+QT += charts
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -10,6 +11,10 @@ CONFIG += c++17
 
 SOURCES += \
         FileModel/filedatamodel.cpp \
+        Graph/abstractchart.cpp \
+        Graph/barchart.cpp \
+        Graph/chartadapter.cpp \
+        Graph/piechart.cpp \
         main.cpp \
         mainwindow.cpp \
         FileModel/fileexplorermodel.cpp \
@@ -21,6 +26,11 @@ SOURCES += \
 HEADERS += \
         FileModel/filedatamodel.h \
         FileModel/ifiledatamodel.h \
+        Graph/abstractchart.h \
+        Graph/barchart.h \
+        Graph/chartadapter.h \
+        Graph/ifilebrowserobserver.h \
+        Graph/piechart.h \
         mainwindow.h \
         FileModel/fileexplorermodel.h \
         Strategy/basesizecalculationstrategy.h \

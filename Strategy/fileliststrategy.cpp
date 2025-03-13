@@ -19,5 +19,6 @@ QVector<QPair<QString, QString>> FileListStrategy::calculate(const QString &path
         sizeMap[type] = fileSize;
     }
 
+    Notify(sizeMap);
     return calculatePercentage(sizeMap, totalSize);
 }

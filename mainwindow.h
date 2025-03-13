@@ -7,6 +7,11 @@
 #include <QTreeView>
 #include <QTableView>
 #include <QComboBox>
+#include "Graph/ChartAdapter.h"
+#include "Graph/BarChart.h"
+#include "Graph/PieChart.h"
+#include <QStackedWidget>
+
 #include "FileModel/fileexplorermodel.h"
 
 class MainWindow : public QMainWindow
@@ -30,6 +35,15 @@ private:
     void updateColumnWidth();
     void updateTreeViewColumnWidth();
     int calculateMaxColumnWidth();
+
+    QComboBox *displayModeComboBox;
+    ChartAdapter *barChartAdapter;
+    ChartAdapter *pieChartAdapter;
+    QWidget *currentView = nullptr;
+    void changeDisplayMode(int index);
+    ISizeCalculationStrategy *currentStrategy = nullptr;
+    void subscribeChartsToStrategy(ISizeCalculationStrategy *strategy);
+    QStackedWidget *stackedWidget;
 };
 
 #endif // MAINWINDOW_H
