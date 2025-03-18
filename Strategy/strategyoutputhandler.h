@@ -1,5 +1,7 @@
 #ifndef STRATEGYOUTPUTHANDLER_H
 #define STRATEGYOUTPUTHANDLER_H
+#include <vector>
+#include <QPair>
 #include <QString>
 
 class StrategyOutputHandler {

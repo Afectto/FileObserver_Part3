@@ -1,6 +1,6 @@
 #ifndef IFILEBROWSEROBSERVER_H
 #define IFILEBROWSEROBSERVER_H
-
+#include <QDebug>
 #include <QMap>
 #include <QString>
 

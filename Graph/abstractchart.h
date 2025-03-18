@@ -5,6 +5,8 @@
 #include <QWidget>
 #include <QVBoxLayout>
 
+using namespace QtCharts;
+
 //Template Method - Определяет общий алгоритм создания диаграммы
 class AbstractChart : public QWidget {
     Q_OBJECT

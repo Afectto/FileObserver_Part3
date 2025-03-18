@@ -37,7 +37,7 @@ QVector<QPair<QString, QString>> FileTypeStrategy::calculate(const QString &path
     for (auto it = sizeMap.constBegin(); it != sizeMap.constEnd(); ++it) {
         double percentage = static_cast<double>(it.value()) / totalSize * 100;
         QString percentageStr = (percentage < 0.01 && it.value() > 0) ? "< 0.01%" : QString::number(percentage, 'f', 2) + "%";
-        displayList.emplace_back(it.key(), percentageStr);
+        displayList.push_back({it.key(), percentageStr});
     }
 
     Notify(sizeMap);

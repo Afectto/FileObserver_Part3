@@ -40,14 +40,14 @@ QVector<QPair<QString, QString> > BaseSizeCalculationStrategy::calculatePercenta
     QVector<QPair<QString, QString>> percentageList;
 
     if (totalSize == 0) {
-        percentageList.emplace_back("Directory is empty", "0%");
+        percentageList.push_back({"Directory is empty", "0%"});
         return percentageList;
     }
 
     for (auto it = sizeMap.constBegin(); it != sizeMap.constEnd(); ++it) {
         double percentage = static_cast<double>(it.value()) / totalSize * 100;
         QString percentageStr = (percentage < 0.01 && it.value() > 0) ? "< 0.01%" : QString::number(percentage, 'f', 2) + "%";
-        percentageList.emplace_back(it.key(), percentageStr);
+        percentageList.push_back({it.key(), percentageStr});
     }
 
     return percentageList;

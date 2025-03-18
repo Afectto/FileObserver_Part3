@@ -3,6 +3,16 @@
 BarChart::BarChart(QWidget *parent) : AbstractChart(parent) {}
 
 void BarChart::DrawChart(const QMap<QString, qint64> &data) {
+    // Удаляем все оси X
+    for (auto axis : chart->axes(Qt::Horizontal)) {
+        chart->removeAxis(axis);
+    }
+
+    // Удаляем все оси Y
+    for (auto axis : chart->axes(Qt::Vertical)) {
+        chart->removeAxis(axis);
+    }
+
     QBarSeries *series = new QBarSeries();
     QBarSet *set = new QBarSet("Размер файлов");
 
